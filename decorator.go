@@ -6,14 +6,18 @@ import (
 )
 
 type Command interface {
-	Name() string
+	CommandName() string
+}
+
+type Query interface {
+	QueryName() string
 }
 
 type CommandHandler[C Command] interface {
 	Handle(ctx context.Context, cmd C) error
 }
 
-type QueryHandler[C Command, R any] interface {
+type QueryHandler[C Query, R any] interface {
 	Handle(ctx context.Context, cmd C) (R, error)
 }
 
@@ -31,7 +35,7 @@ func NewCommandDecoratorWithNewRelic[C Command](nrl *newrelic.Application, handl
 
 func (c commandHandlerWithNewRelic[C]) Handle(ctx context.Context, cmd C) (err error) {
 
-	txn := c.relic.StartTransaction(cmd.Name())
+	txn := c.relic.StartTransaction(cmd.CommandName())
 	var nrc = newrelic.NewContext(ctx, txn)
 
 	defer func() {
@@ -44,12 +48,12 @@ func (c commandHandlerWithNewRelic[C]) Handle(ctx context.Context, cmd C) (err e
 	return c.base.Handle(nrc, cmd)
 }
 
-type queryHandlerWithNewRelic[C Command, R any] struct {
+type queryHandlerWithNewRelic[C Query, R any] struct {
 	relic *newrelic.Application
 	base  QueryHandler[C, R]
 }
 
-func NewQueryDecoratorWithNewRelic[C Command, R any](nrl *newrelic.Application, handler QueryHandler[C, R]) QueryHandler[C, R] {
+func NewQueryDecoratorWithNewRelic[C Query, R any](nrl *newrelic.Application, handler QueryHandler[C, R]) QueryHandler[C, R] {
 	return queryHandlerWithNewRelic[C, R]{
 		relic: nrl,
 		base:  handler,
@@ -58,7 +62,7 @@ func NewQueryDecoratorWithNewRelic[C Command, R any](nrl *newrelic.Application, 
 
 func (c queryHandlerWithNewRelic[C, R]) Handle(ctx context.Context, cmd C) (response R, err error) {
 
-	txn := c.relic.StartTransaction(cmd.Name())
+	txn := c.relic.StartTransaction(cmd.QueryName())
 	var nrc = newrelic.NewContext(ctx, txn)
 
 	defer func() {
