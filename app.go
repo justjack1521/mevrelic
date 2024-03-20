@@ -21,10 +21,10 @@ func (a *NewRelic) Levels() []logrus.Level {
 	return logrus.AllLevels
 }
 
-func NewRelicApplication() *NewRelic {
+func NewRelicApplication() (*NewRelic, error) {
 	config, err := mevconn.CreateNewRelicConfig()
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	relic, err := newrelic.NewApplication(
 		newrelic.ConfigAppName(config.ApplicationName()),
@@ -32,12 +32,15 @@ func NewRelicApplication() *NewRelic {
 		newrelic.ConfigAppLogDecoratingEnabled(true),
 		newrelic.ConfigAppLogForwardingEnabled(false),
 	)
+	if err != nil {
+		return nil, err
+	}
 	return &NewRelic{
 		LicenseKey:  config.LicenseKey(),
 		EntityGUID:  config.ApplicationGUID(),
 		EntityName:  config.ApplicationName(),
 		Application: relic,
-	}
+	}, nil
 }
 
 func (a *NewRelic) Fire(entry *logrus.Entry) error {
