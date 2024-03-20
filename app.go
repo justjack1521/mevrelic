@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/justjack1521/mevconn"
+	"github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrlogrus"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -41,6 +42,12 @@ func NewRelicApplication() (*NewRelic, error) {
 		EntityName:  config.ApplicationName(),
 		Application: relic,
 	}, nil
+}
+
+func (a *NewRelic) Attach(logger *logrus.Logger) {
+	nrl := nrlogrus.NewFormatter(a.Application, &logrus.TextFormatter{})
+	logger.SetFormatter(nrl)
+	logger.AddHook(a)
 }
 
 func (a *NewRelic) Fire(entry *logrus.Entry) error {

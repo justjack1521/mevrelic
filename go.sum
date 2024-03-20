@@ -10,6 +10,8 @@ github.com/justjack1521/mevconn v0.0.0-20240319123519-20904c083749 h1:h+MXHTQvw3
 github.com/justjack1521/mevconn v0.0.0-20240319123519-20904c083749/go.mod h1:G4gKWe7Q6DwT8YeBcwtowwIAjjQXBXiHe4IoHYiOYQY=
 github.com/newrelic/go-agent/v3 v3.30.0 h1:ZXHCT/Cot4iIPwcegCZURuRQOsfmGA6wilW+S3bfBjY=
 github.com/newrelic/go-agent/v3 v3.30.0/go.mod h1:9utrgxlSryNqRrTvII2XBL+0lpofXbqXApvVWPpbzUg=
+github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrlogrus v1.0.0 h1:i7maT5Pi3qv2xlUU/vm/C5BkG8YMLlIHfIWtMmXz7cY=
+github.com/newrelic/go-agent/v3/integrations/logcontext-v2/nrlogrus v1.0.0/go.mod h1:zYcBp4EDE47PUsZZAzEZ36QGC9YU2Wx9FSQ3goi7cCg=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ=
