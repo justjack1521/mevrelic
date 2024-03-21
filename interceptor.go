@@ -13,6 +13,7 @@ func ServerInterceptor(relic *NewRelic) grpc.UnaryServerInterceptor {
 
 		if relic != nil && relic.Application != nil {
 			txn = relic.Application.StartTransaction(info.FullMethod)
+			ctx = newrelic.NewContext(ctx, txn)
 			defer txn.End()
 		}
 
