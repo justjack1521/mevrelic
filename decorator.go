@@ -27,15 +27,16 @@ func NewCommandDecoratorWithNewRelic[C Command, R any](nrl *newrelic.Application
 
 func (c commandHandlerWithNewRelic[C, R]) Handle(ctx context.Context, cmd C) (result R, err error) {
 
-	txn := c.relic.StartTransaction(cmd.CommandName())
-	var nrc = newrelic.NewContext(ctx, txn)
+	var txn = newrelic.FromContext(ctx)
+
+	var segment = txn.StartSegment(cmd.CommandName())
 
 	defer func() {
 		if err != nil {
 			txn.NoticeError(err)
 		}
-		txn.End()
+		segment.End()
 	}()
 
-	return c.base.Handle(nrc, cmd)
+	return c.base.Handle(ctx, cmd)
 }
