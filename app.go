@@ -32,6 +32,9 @@ func NewRelicApplication() (*NewRelic, error) {
 		newrelic.ConfigLicense(config.LicenseKey()),
 		newrelic.ConfigAppLogDecoratingEnabled(true),
 		newrelic.ConfigAppLogForwardingEnabled(false),
+		func(cfg *newrelic.Config) {
+			cfg.ErrorCollector.RecordPanics = true
+		},
 	)
 	if err != nil {
 		return nil, err
