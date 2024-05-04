@@ -5,12 +5,16 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
+type Context interface {
+	Context() context.Context
+}
+
 type Command interface {
 	CommandName() string
 }
 
 type CommandHandler[C Command, R any] interface {
-	Handle(ctx context.Context, cmd C) (R, error)
+	Handle(ctx Context, cmd C) (R, error)
 }
 
 type commandHandlerWithNewRelic[C Command, R any] struct {
@@ -25,9 +29,9 @@ func NewCommandDecoratorWithNewRelic[C Command, R any](nrl *newrelic.Application
 	}
 }
 
-func (c commandHandlerWithNewRelic[C, R]) Handle(ctx context.Context, cmd C) (result R, err error) {
+func (c commandHandlerWithNewRelic[C, R]) Handle(ctx Context, cmd C) (result R, err error) {
 
-	var txn = newrelic.FromContext(ctx)
+	var txn = newrelic.FromContext(ctx.Context())
 
 	var segment = txn.StartSegment(cmd.CommandName())
 
