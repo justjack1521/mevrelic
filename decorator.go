@@ -14,7 +14,7 @@ type Command interface {
 }
 
 type CommandHandler[CTX Context, C Command, R any] interface {
-	Handle(ctx Context, cmd C) (R, error)
+	Handle(ctx CTX, cmd C) (R, error)
 }
 
 type commandHandlerWithNewRelic[CTX Context, C Command, R any] struct {
@@ -29,7 +29,7 @@ func NewCommandDecoratorWithNewRelic[CTX Context, C Command, R any](nrl *newreli
 	}
 }
 
-func (c commandHandlerWithNewRelic[CTX, C, R]) Handle(ctx Context, cmd C) (result R, err error) {
+func (c commandHandlerWithNewRelic[CTX, C, R]) Handle(ctx CTX, cmd C) (result R, err error) {
 
 	var txn = newrelic.FromContext(ctx.ActualContext())
 
