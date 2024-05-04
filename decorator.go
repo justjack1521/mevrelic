@@ -13,23 +13,23 @@ type Command interface {
 	CommandName() string
 }
 
-type CommandHandler[C Command, R any] interface {
+type CommandHandler[CTX Context, C Command, R any] interface {
 	Handle(ctx Context, cmd C) (R, error)
 }
 
-type commandHandlerWithNewRelic[C Command, R any] struct {
+type commandHandlerWithNewRelic[CTX Context, C Command, R any] struct {
 	relic *newrelic.Application
-	base  CommandHandler[C, R]
+	base  CommandHandler[CTX, C, R]
 }
 
-func NewCommandDecoratorWithNewRelic[C Command, R any](nrl *newrelic.Application, handler CommandHandler[C, R]) CommandHandler[C, R] {
-	return commandHandlerWithNewRelic[C, R]{
+func NewCommandDecoratorWithNewRelic[CTX Context, C Command, R any](nrl *newrelic.Application, handler CommandHandler[CTX, C, R]) CommandHandler[CTX, C, R] {
+	return commandHandlerWithNewRelic[CTX, C, R]{
 		relic: nrl,
 		base:  handler,
 	}
 }
 
-func (c commandHandlerWithNewRelic[C, R]) Handle(ctx Context, cmd C) (result R, err error) {
+func (c commandHandlerWithNewRelic[CTX, C, R]) Handle(ctx Context, cmd C) (result R, err error) {
 
 	var txn = newrelic.FromContext(ctx.ActualContext())
 
