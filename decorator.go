@@ -6,7 +6,7 @@ import (
 )
 
 type Context interface {
-	ActualContext() context.Context
+	context.Context
 }
 
 type Command interface {
@@ -31,7 +31,7 @@ func NewCommandDecoratorWithNewRelic[CTX Context, C Command, R any](nrl *newreli
 
 func (c commandHandlerWithNewRelic[CTX, C, R]) Handle(ctx CTX, cmd C) (result R, err error) {
 
-	var txn = newrelic.FromContext(ctx.ActualContext())
+	var txn = newrelic.FromContext(ctx)
 
 	var segment = txn.StartSegment(cmd.CommandName())
 
