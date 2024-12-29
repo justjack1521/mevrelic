@@ -2,7 +2,9 @@ package mevrelic
 
 import (
 	"context"
+	"github.com/justjack1521/mevrpc"
 	"github.com/newrelic/go-agent/v3/newrelic"
+	uuid "github.com/satori/go.uuid"
 )
 
 type Context interface {
@@ -32,8 +34,17 @@ func NewCommandDecoratorWithNewRelic[CTX Context, C Command, R any](nrl *newreli
 func (c commandHandlerWithNewRelic[CTX, C, R]) Handle(ctx CTX, cmd C) (result R, err error) {
 
 	var txn = newrelic.FromContext(ctx)
-
 	var segment = txn.StartSegment(cmd.CommandName())
+
+	var user = mevrpc.UserIDFromContext(ctx)
+	if user != uuid.Nil {
+		txn.AddAttribute("user.id", user.String())
+	}
+
+	var player = mevrpc.PlayerIDFromContext(ctx)
+	if player != uuid.Nil {
+		txn.AddAttribute("player.id", user.String())
+	}
 
 	defer func() {
 		if err != nil {
