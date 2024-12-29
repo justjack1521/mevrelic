@@ -43,7 +43,7 @@ func (c commandHandlerWithNewRelic[CTX, C, R]) Handle(ctx CTX, cmd C) (result R,
 
 	var player = mevrpc.PlayerIDFromContext(ctx)
 	if player != uuid.Nil {
-		txn.AddAttribute("player.id", user.String())
+		txn.AddAttribute("player.id", player.String())
 	}
 
 	defer func() {
