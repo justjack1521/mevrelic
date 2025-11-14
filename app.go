@@ -73,9 +73,9 @@ func (a *NewRelic) Fire(entry *logrus.Entry) error {
 		"application/json",
 		bytes.NewBuffer(body),
 	)
-	defer req.Body.Close()
 	if err != nil {
 		return err
 	}
+	defer req.Body.Close()
 	return nil
 }
